@@ -5,5 +5,18 @@
 # Home page
 GET     /                           controllers.Application.index
 
+GET     /words/search               controllers.WordController.searchWord
+POST    /words                      controllers.WordController.createWord
+GET     /words/new                  controllers.WordController.newWord
+GET     /words/:keyword             controllers.WordController.showWord(keyword:String)
+
+POST    /favour/words               controllers.Application.favourWord
+
+POST    /comments                   controllers.CommentController.createComment
+
+GET     /login                      controllers.LoginController.login
+GET     /logout                     controllers.LoginController.logout
+POST    /login                      controllers.LoginController.doLogin
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

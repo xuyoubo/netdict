@@ -1,0 +1,10 @@
+@import models.Comment
+@(comments: List[Comment])
+
+<h5>网友评论：</h5>
+<ul class="list-unstyled">
+<table class="table table-striped">
+  @for(comment <- comments){
+    <tr><td>@comment.content</td></tr>
+  }
+</table>

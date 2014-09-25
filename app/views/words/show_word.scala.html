@@ -1,0 +1,36 @@
+@import models.Word
+@import helper._
+@(word: Option[Word],keyword:String)
+
+@main("搜索结果"){
+  <div class="container">
+    @common.layout {
+      @common.search_form()
+      @if(word.isDefined) {
+        <div class="search-pane">
+          <div class="search-result">
+            <h4>@word.get.keyword</h4>
+            <p>@word.get.trans</p>
+          </div>
+          <div>
+            <form id="favourForm">
+              <input type="hidden" name="id" value="@word.get.id"/>
+              <button class="btn btn-default" id="favourBtn">
+                <span class="glyphicon glyphicon-thumbs-up" id="favourCount">&nbsp;@word.get.favourCount</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      } else {
+        @word_notfound(keyword)
+      }
+
+      <hr/>
+      @comments.list_comments(word.get.comments)
+      <div class="sp" style="height:16px;"></div>
+      @comments.new_comment(word.get.id)
+    }
+
+  </div>
+  <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
+}

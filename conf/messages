@@ -1,0 +1,8 @@
+keyword.duplicate=单词已经存在
+keyword.notfound=抱歉，未找到与您查询的"{0}"相匹配的单词
+
+save.success=保存成功
+login.validation.require=请输入用户名和密码
+login.validation.incorrent=用户名/密码不正确
+
+login.title=登录

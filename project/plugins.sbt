@@ -16,3 +16,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
+
+libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1102-jdbc41"
+
+addSbtPlugin("org.scalikejdbc" %% "scalikejdbc-mapper-generator" % "2.1.1")
+

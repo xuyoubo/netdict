@@ -1,0 +1,29 @@
+@import helper._
+@(wordForm:Form[WordData])
+
+@main("新单词") {
+  <div class="container">
+    @form(action=routes.WordController.createWord,args='class->"form-horizontal",'id->"fm"){
+        @if(wordForm.error("keyword").isDefined) {
+          <div class="form-group has-error">
+        } else {
+          <div class="form-group">
+        }
+          <label for="word">关键字</label>
+          <input type="text" class="form-control" name="keyword" value='@wordForm("keyword").value.getOrElse("")' id="keyword">
+          @if(wordForm.error("keyword").isDefined) {
+            <div class="error">
+            @wordForm.error("keyword").get.message
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <div for="trans">解释</div>
+          <textarea name="trans" class="form-control" id="trans" rows="6" value='@wordForm("trans").value.getOrElse("")'></textarea>
+        </div>
+        <input type="submit" class="btn btn-primary"/>
+        <a href="@routes.Application.index" class="btn btn-default"/>取消</a>
+      </div>
+    }
+  </div>
+}

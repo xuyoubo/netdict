@@ -1,0 +1,7 @@
+@(keyword:String)
+@import play.api.i18n._
+
+<span>@{Messages("keyword.notfound",keyword)}</span>
+<div>
+  <a href="/words/new?w=@keyword">我来补充</a>
+</div>

@@ -1,0 +1,35 @@
+#fm {
+  position: relative;
+  width: 592px;
+  margin: 3px auto 0;
+  z-index: 5;
+}
+
+#keyword {
+  width:461px;
+}
+
+.search-pane {
+  width: 592px;
+  margin: 3px auto 0;
+  padding-top: 5px;
+}
+
+.ft a{
+  color: #999;
+}
+
+.login-form {
+  width: 350px;
+  margin: 49px auto 0;
+  padding: 30px; 
+}
+
+.footer {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-top: 100px;
+  color: #777;
+  text-align: center;
+  border-top: 1px solid #e5e5e5;
+}

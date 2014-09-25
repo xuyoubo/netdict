@@ -1,7 +1,25 @@
-@(message: String)
+@(message: Option[String],hotWords:List[Word])
+@import helper._
 
-@main("Welcome to Play") {
-
-    @play20.welcome(message)
-
+@main("欢迎使用网络新词词典") {
+  <div class="container">
+    @if(message.isDefined) {
+      <div class="alert alert-success">
+        <div>@message.get</div>
+      </div>
+    }
+    <div class="sp" style="height:90px;">
+    </div>
+    @common.layout {
+      @common.search_form()
+      <ul class="list-inline">
+        <li>热词</li>
+        @for(word <- hotWords){
+          <li><a href="@routes.WordController.showWord(word.keyword)">@word.keyword</a></li>
+        }
+      </ul>
+    }
+    <div class="sp" style="height:56px;"></div>
+  </div>
+  @common.footer()
 }
