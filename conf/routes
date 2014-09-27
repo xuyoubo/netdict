@@ -8,7 +8,7 @@ GET     /                           controllers.Application.index
 GET     /words/search               controllers.WordController.searchWord
 POST    /words                      controllers.WordController.createWord
 GET     /words/new                  controllers.WordController.newWord
-GET     /words/:keyword             controllers.WordController.showWord(keyword:String)
+GET     /words/:id                  controllers.WordController.showWord(id:Int)
 
 POST    /favour/words               controllers.Application.favourWord
 

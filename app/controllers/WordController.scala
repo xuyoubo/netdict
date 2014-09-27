@@ -13,6 +13,7 @@ import play.api.data.validation._
 case class WordData(keyword: String, trans: Option[String])
 
 object WordController extends BaseController {
+
   case class SearchData(keyword: String)
   val SearchForm = Form(
     mapping(
@@ -40,10 +41,15 @@ object WordController extends BaseController {
 
   def showWord(keyword:String) = Action { implicit request =>
     val word = Word.findByKeyword(keyword)
-    Ok(views.html.words.show_word(word,keyword))
+    Ok(views.html.words.show_word(word))
   }
 
-  def newWord = Action { implicit request =>
+  def showWord(id:Int) = Action { implicit request =>
+    val word = Word.find(id)
+    Ok(views.html.words.show_word(word))
+  }
+
+  def newWord = AuthenticatedAction { implicit request =>
     val w = request.getQueryString("w")
     val form = WordForm.fill(WordData(w.getOrElse(""),None))
     Ok(views.html.words.new_word(form))
@@ -55,20 +61,18 @@ object WordController extends BaseController {
         Redirect(routes.Application.index)
       },
       searchData => {
-        val wordCount = Word.countBy(sqls.eq(Word.w.keyword,searchData.keyword))
-
-        if(wordCount == 1) {
-          Redirect(routes.WordController.showWord(searchData.keyword))
+        val words = Word.findAllBy(sqls.eq(Word.w.keyword,searchData.keyword))
+        if(words.size == 1) {
+          Ok(views.html.words.show_word(Some(words.head)))
         }
         else {
-          val words = Word.findAllBy(sqls.eq(Word.w.keyword,searchData.keyword))
           Ok(views.html.words.list_words(words, searchData.keyword))
         }
       }
     )
   }
 
-  def createWord = Action { implicit request =>
+  def createWord = AuthenticatedAction { implicit request =>
     WordForm.bindFromRequest.fold(
       formWithErrors => {
         Ok(views.html.words.new_word(formWithErrors))
@@ -79,8 +83,8 @@ object WordController extends BaseController {
           Ok(views.html.words.new_word(WordForm))
         }
         else {
-          Word.create(word.keyword, word.trans,Some(0),Some(0))
-          Redirect("/").flashing("message" -> Messages("save.success"))
+          val w = Word.create(word.keyword, word.trans,Some(0),Some(0))
+          Redirect(routes.WordController.showWord(w.id)).flashing("success" -> Messages("save.success"))
         }
       }
     )

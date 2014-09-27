@@ -24,23 +24,20 @@ object Application extends BaseController {
             "message"->JsString("no id provide")
           ))
       ),
-      id => {
-        Word.find(id) match {
-          case Some(myWord) => {
-            myWord.copy(favourCount = Some(myWord.favourCount.getOrElse(0) + 1)).save
+      id => Word.find(id) match {
+        case Some(myWord) => {
+          myWord.copy(favourCount = Some(myWord.favourCount.getOrElse(0) + 1)).save
 
-            Ok(JsObject(Seq(
-                "status"->JsString("ok"),
-                "favourCount"->JsNumber(myWord.favourCount.get)
-              )))
-          }
-          case None =>
-            Ok(JsObject(
-              Seq("status"->JsString("fail"),
-              "message"->JsString("word not found"))
-            ))
+          Ok(JsObject(Seq(
+            "status"->JsString("ok"),
+            "favourCount"->JsNumber(myWord.favourCount.get)
+          )))
         }
-      }
+        case None =>
+          Ok(JsObject(
+            Seq("status"->JsString("fail"),
+            "message"->JsString("word not found"))
+        ))}
     )
   }
 }

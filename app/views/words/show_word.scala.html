@@ -1,11 +1,13 @@
 @import models.Word
 @import helper._
-@(word: Option[Word],keyword:String)
+@(word: Option[Word])(implicit flash: Flash)
 
 @main("搜索结果"){
   <div class="container">
-    @common.layout {
+    @common.notice()
+    @common.layout{
       @common.search_form()
+
       @if(word.isDefined) {
         <div class="search-pane">
           <div class="search-result">
@@ -22,13 +24,17 @@
           </div>
         </div>
       } else {
-        @word_notfound(keyword)
+        未找到单词
       }
-
       <hr/>
-      @comments.list_comments(word.get.comments)
-      <div class="sp" style="height:16px;"></div>
-      @comments.new_comment(word.get.id)
+      @word match {
+        case Some(w) => {
+          @comments.list_comments(w.comments)
+          <div class="sp" style="height:16px;"></div>
+          @comments.new_comment(w.id)
+        }
+        case _ => {}
+      }
     }
 
   </div>

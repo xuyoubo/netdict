@@ -3,10 +3,12 @@ package models
 import scalikejdbc._
 
 case class Comment(
-  id: Int,
-  wordId: Option[Int] = None,
-  memberId: Option[Int] = None,
-  content: Option[String] = None) {
+    id: Int,
+    wordId: Option[Int] = None,
+    memberId: Option[Int] = None,
+    content: Option[String] = None,
+    member: Option[Member] = None
+  ) {
 
   def save()(implicit session: DBSession = Comment.autoSession): Comment = Comment.save(this)(session)
 
@@ -29,7 +31,7 @@ object Comment extends SQLSyntaxSupport[Comment] {
     content = rs.get(c.content)
   )
 
-  val c = Comment.syntax("c")
+  val (c,m) = (Comment.syntax,Member.syntax)
 
   override val autoSession = AutoSession
 
@@ -49,8 +51,13 @@ object Comment extends SQLSyntaxSupport[Comment] {
 
   def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[Comment] = {
     withSQL {
-      select.from(Comment as c).where.append(sqls"${where}")
-    }.map(Comment(c.resultName)).list.apply()
+      select.from(Comment as c).innerJoin(Member as m).on(c.memberId,m.id).where.append(sqls"${where}")
+    }
+    .one(Comment(c))
+    .toOne(Member(m))
+    .map((comment,member) => comment.copy(member = Some(member)))
+    .list
+    .apply()
   }
 
   def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {

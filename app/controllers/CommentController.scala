@@ -16,20 +16,18 @@ object CommentController extends BaseController {
     )(CommentData.apply)(CommentData.unapply)
   )
 
-  def createComment = Action { implicit request =>
+  def createComment = AuthenticatedAction { implicit request =>
     CommentForm.bindFromRequest.fold (
       errors => {
-        Redirect(routes.WordController.showWord("aa"))
+        Redirect(routes.WordController.showWord(1))
       },
       commentData => {
         val word = Word.find(commentData.wordId)
 
-        Comment.create(Some(word.get.id),Some(1),Some(commentData.content))
-        Redirect(routes.WordController.showWord(word.get.keyword))
+        Comment.create(Some(word.get.id),Some(request.session("userid").toInt),Some(commentData.content))
+        Redirect(routes.WordController.showWord(commentData.wordId))
       }
     )
   }
 }
-
-
 

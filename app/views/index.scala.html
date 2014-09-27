@@ -1,13 +1,10 @@
-@(message: Option[String],hotWords:List[Word])
+@(message: Option[String],hotWords:List[Word])(implicit flash: Flash)
 @import helper._
 
 @main("欢迎使用网络新词词典") {
   <div class="container">
-    @if(message.isDefined) {
-      <div class="alert alert-success">
-        <div>@message.get</div>
-      </div>
-    }
+    @common.notice()
+
     <div class="sp" style="height:90px;">
     </div>
     @common.layout {
@@ -15,7 +12,7 @@
       <ul class="list-inline">
         <li>热词</li>
         @for(word <- hotWords){
-          <li><a href="@routes.WordController.showWord(word.keyword)">@word.keyword</a></li>
+          <li><a href="@routes.WordController.showWord(word.id)">@word.keyword</a></li>
         }
       </ul>
     }

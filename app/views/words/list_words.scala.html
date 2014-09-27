@@ -4,16 +4,15 @@
 
 @main("搜索结果"){
   <div class="container">
-    @common.layout {
+    @common.layout{
       @common.search_form()
-
       <div class="search-pane">
         @if(words.isEmpty) {
           @word_notfound(keyword)
         } else {
         <ul class="list-unstyled">
           @for(word <- words){
-          <li><h4><a href="@routes.WordController.showWord(word.keyword)">@word.keyword</a></h4><p>@word.trans</p></li>
+          <li><h4><a href="@routes.WordController.showWord(word.id)">@word.keyword</a></h4><p>@word.trans</p></li>
           }
         </ul>
         }

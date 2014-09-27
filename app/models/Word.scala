@@ -3,10 +3,10 @@ package models
 import scalikejdbc._
 
 case class Word(
-  id: Int, 
-  keyword: String, 
-  trans: Option[String] = None, 
-  searchCount: Option[Int] = None, 
+  id: Int,
+  keyword: String,
+  trans: Option[String] = None,
+  searchCount: Option[Int] = None,
   favourCount: Option[Int] = None
   ) {
 
@@ -17,7 +17,7 @@ case class Word(
   def destroy()(implicit session: DBSession = Word.autoSession): Unit = Word.destroy(this)(session)
 
 }
-      
+
 
 object Word extends SQLSyntaxSupport[Word] {
 
@@ -33,7 +33,7 @@ object Word extends SQLSyntaxSupport[Word] {
     searchCount = rs.get(w.searchCount),
     favourCount = rs.get(w.favourCount)
   )
-      
+
   val w = Word.syntax("w")
 
   override val autoSession = AutoSession
@@ -43,27 +43,27 @@ object Word extends SQLSyntaxSupport[Word] {
       select.from(Word as w).where.eq(w.id, id)
     }.map(Word(w.resultName)).single.apply()
   }
-          
+
   def findAll()(implicit session: DBSession = autoSession): List[Word] = {
     withSQL(select.from(Word as w)).map(Word(w.resultName)).list.apply()
   }
-          
+
   def countAll()(implicit session: DBSession = autoSession): Long = {
     withSQL(select(sqls"count(1)").from(Word as w)).map(rs => rs.long(1)).single.apply().get
   }
-          
+
   def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[Word] = {
-    withSQL { 
+    withSQL {
       select.from(Word as w).where.append(sqls"${where}")
     }.map(Word(w.resultName)).list.apply()
   }
-      
+
   def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
-    withSQL { 
+    withSQL {
       select(sqls"count(1)").from(Word as w).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
   }
-      
+
   def create(
     keyword: String,
     trans: Option[String] = None,
@@ -84,7 +84,7 @@ object Word extends SQLSyntaxSupport[Word] {
     }.updateAndReturnGeneratedKey.apply()
 
     Word(
-      id = generatedKey.toInt, 
+      id = generatedKey.toInt,
       keyword = keyword,
       trans = trans,
       searchCount = searchCount,
@@ -103,11 +103,11 @@ object Word extends SQLSyntaxSupport[Word] {
     }.update.apply()
     entity
   }
-        
+
   def destroy(entity: Word)(implicit session: DBSession = autoSession): Unit = {
     withSQL { delete.from(Word).where.eq(column.id, entity.id) }.update.apply()
   }
-        
+
   def topN(n:Int)(implicit session: DBSession = AutoSession): List[Word] = {
     withSQL {
       select.from(Word as w).orderBy(w.searchCount).desc.limit(n).offset(0)
@@ -120,7 +120,7 @@ object Word extends SQLSyntaxSupport[Word] {
     }.map(Word(w.resultName)).first.apply()
 
     if(word.isDefined) {
-      updateSearchCount(word.get) 
+      updateSearchCount(word.get)
     }
     word
   }

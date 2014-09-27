@@ -1,0 +1,29 @@
+@()(implicit flash: Flash)
+
+@flash.get("success") match {
+  case Some(msg) => {
+    <div class="alert alert-success">
+      @msg
+    </div>
+  }
+  case _ => {}
+}
+
+@flash.get("warning") match {
+  case Some(msg) => {
+    <div class="alert alert-warning">
+      @msg
+    </div>
+  }
+  case _ => {}
+}
+
+
+@flash.get("error") match {
+  case Some(msg) => {
+    <div class="alert alert-error">
+      @msg
+    </div>
+  }
+  case _ => {}
+}

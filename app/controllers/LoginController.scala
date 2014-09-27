@@ -10,17 +10,10 @@ import play.api.i18n._
 import play.api.mvc._
 
 import scala.concurrent.Future
-import scalikejdbc.SQLInterpolation._
-import scalikejdbc._
 import controllers._
 import play.api.libs.json._
 
 object LoginController extends BaseController {
-
-  def index = Action { implicit request =>
-    val hotWords = Word.topN(10)
-    Ok(views.html.index(request.flash.get("message"),hotWords))
-  }
 
   def login = Action { request =>
     val title = Messages("login.title")
@@ -43,13 +36,11 @@ object LoginController extends BaseController {
   def doLogin = Action { implicit request => 
     LoginForm.bindFromRequest.fold(
       errors => Redirect(routes.LoginController.login).flashing("error" -> Messages("login.validation.require")),
-      loginData => {
-        if (Member.authorize(loginData.username, loginData.password)) {
-          Redirect(routes.Application.index).withSession("username" -> loginData.username)
-        }
-        else {
+      loginData => Member.authorize(loginData.username, loginData.password) match {
+        case Some(member) =>
+          Redirect(routes.Application.index).withSession("username" -> member.name,"userid" -> member.id.toString)
+        case None =>
           Redirect(routes.LoginController.login).flashing("error" -> Messages("login.validation.incorrent"))
-        }
       }
     )
   }

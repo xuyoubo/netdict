@@ -91,7 +91,13 @@ object Member extends SQLSyntaxSupport[Member] {
     withSQL { delete.from(Member).where.eq(column.id, entity.id) }.update.apply()
   }
 
-  def authorize(name:String,password:String):Boolean = {
-    true
+  def authorize(name:String,password:String):Option[Member] = {
+    val members = Member.findAllBy(sqls.eq(m.name,name).and.eq(m.password,password));
+    if(members.isEmpty) {
+      None
+    }
+    else {
+      Some(members.head)
+    }
   }
 }

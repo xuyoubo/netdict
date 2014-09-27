@@ -3,8 +3,16 @@
 
 <h5>网友评论：</h5>
 <ul class="list-unstyled">
-<table class="table table-striped">
   @for(comment <- comments){
-    <tr><td>@comment.content</td></tr>
+    <li>
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            @comment.member.get.name
+          </div>
+          <div class="panel-body">
+            @comment.content
+          </div>
+        </div>
+    </li>
   }
-</table>
+</ul>
