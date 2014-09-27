@@ -13,14 +13,14 @@ import scala.concurrent.Future
 import controllers._
 import play.api.libs.json._
 
-object LoginController extends BaseController {
+object MemberController extends BaseController {
 
-  def login = Action { request =>
+  def login = Action { implicit request =>
     val title = Messages("login.title")
     Ok(views.html.login(title, request.flash.get("error")))
   }
 
-  def logout = Action { request =>
+  def logout = Action { implicit request =>
     Redirect(routes.Application.index).withNewSession
   }
 
@@ -33,14 +33,18 @@ object LoginController extends BaseController {
     )(LoginData.apply)(LoginData.unapply)
   )
 
+  def regist = Action { implicit request =>
+    Ok("regist")
+  }
+
   def doLogin = Action { implicit request => 
     LoginForm.bindFromRequest.fold(
-      errors => Redirect(routes.LoginController.login).flashing("error" -> Messages("login.validation.require")),
+      errors => Redirect(routes.MemberController.login).flashing("error" -> Messages("login.validation.require")),
       loginData => Member.authorize(loginData.username, loginData.password) match {
         case Some(member) =>
           Redirect(routes.Application.index).withSession("username" -> member.name,"userid" -> member.id.toString)
         case None =>
-          Redirect(routes.LoginController.login).flashing("error" -> Messages("login.validation.incorrent"))
+          Redirect(routes.MemberController.login).flashing("error" -> Messages("login.validation.incorrent"))
       }
     )
   }

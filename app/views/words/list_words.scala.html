@@ -1,6 +1,6 @@
 @import models.Word
 @import play.api.i18n._
-@(words: List[Word],keyword:String)
+@(words: List[Word],keyword:String)(implicit request:play.api.mvc.RequestHeader)
 
 @main("搜索结果"){
   <div class="container">

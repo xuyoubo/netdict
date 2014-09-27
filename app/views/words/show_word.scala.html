@@ -1,6 +1,6 @@
 @import models.Word
 @import helper._
-@(word: Option[Word])(implicit flash: Flash)
+@(word: Option[Word])(implicit flash: Flash,request:play.api.mvc.RequestHeader)
 
 @main("搜索结果"){
   <div class="container">

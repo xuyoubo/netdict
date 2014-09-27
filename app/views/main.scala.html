@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit request:play.api.mvc.RequestHeader)
 
 <!DOCTYPE html>
 <html>
@@ -12,10 +12,22 @@
     </head>
     <body>
       <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-          <a class="navbar-brand" href="/">网词</a>
-          <ul class="nav navbar-nav navbar-right">
-          </ul>
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">网词</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              @request.session.get("username") match {
+                case Some(username) => {
+                <li><div style="position:relative;line-height:20px;padding-top:15px;">欢迎@username ,<a href="@routes.MemberController.logout">登出</a></div></li>
+                }
+                case _ =>{
+                <li><a href="@routes.MemberController.login">登录</a></li>
+                }
+              }
+            </ul>
+          </div>
         </div>
       </nav>
       @content

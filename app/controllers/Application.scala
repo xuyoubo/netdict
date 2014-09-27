@@ -11,7 +11,8 @@ object Application extends BaseController {
 
   def index = Action { implicit request =>
     val hotWords = Word.topN(10)
-    Ok(views.html.index(request.flash.get("message"),hotWords))
+    val totalWords = Word.countAll()
+    Ok(views.html.index(request.flash.get("message"),totalWords,hotWords))
   }
 
   val favourForm = Form("id" -> number)

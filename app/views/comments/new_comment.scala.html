@@ -1,13 +1,17 @@
 @import helper._
-@(wordId:Long)
+@(wordId:Long)(implicit request:play.api.mvc.RequestHeader)
 
-@form(action=routes.CommentController.createComment){
-    <input type="hidden" value="@wordId" name="wordId"/>
-    <div class="form-group">
-      <div for="content">添加评论</div>
-      <textarea name="content" class="form-control" id="content"></textarea>
-    </div>
-    <div class="form-group">
-      <input type="submit" class="btn btn-primary"/>
-    </div>
+@if(request.session.get("userid").isDefined) {
+  @form(action=routes.CommentController.createComment){
+      <input type="hidden" value="@wordId" name="wordId"/>
+      <div class="form-group">
+        <div for="content">添加评论</div>
+        <textarea name="content" class="form-control" id="content"></textarea>
+      </div>
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary"/>
+      </div>
+  }
+} else {
+  请<a href="@routes.MemberController.login">登录</a>以后进行评论
 }

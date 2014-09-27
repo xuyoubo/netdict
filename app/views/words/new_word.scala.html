@@ -1,5 +1,5 @@
 @import helper._
-@(wordForm:Form[WordData])
+@(wordForm:Form[WordData])(implicit request:play.api.mvc.RequestHeader)
 
 @main("新单词") {
   <div class="container">

@@ -1,8 +1,9 @@
-@(message: Option[String],hotWords:List[Word])(implicit flash: Flash)
 @import helper._
+@(message: Option[String],totalWords:Long,hotWords:List[Word])(implicit flash: Flash,request:play.api.mvc.RequestHeader)
 
 @main("欢迎使用网络新词词典") {
   <div class="container">
+    共收录 @totalWords 单词
     @common.notice()
 
     <div class="sp" style="height:90px;">

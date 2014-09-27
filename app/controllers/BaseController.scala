@@ -11,7 +11,7 @@ trait BaseController extends Controller {
         case Some(username) =>
           block(request)
         case None =>
-          Future.successful(Redirect(routes.LoginController.login))
+          Future.successful(Redirect(routes.MemberController.login))
       }
     }
   }
