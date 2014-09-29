@@ -1,0 +1,10 @@
+@(form:Form[_],field:String)
+
+<div class="error">
+  @form.error(field) match {
+    case Some(e) => {
+      @Messages(e.message)
+    }
+    case _ => {}
+  }
+</div>

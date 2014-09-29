@@ -9,6 +9,7 @@ import scalikejdbc.SQLInterpolation._
 import scalikejdbc._
 import play.api.i18n._
 import play.api.data.validation._
+import play.api.libs.json._
 
 case class WordData(keyword: String, trans: Option[String])
 
@@ -90,4 +91,30 @@ object WordController extends BaseController {
     )
   }
 
+  val favourForm = Form("id" -> number)
+
+  def favourWord = Action { implicit request =>
+    favourForm.bindFromRequest.fold (
+      errors => Ok(
+          JsObject(Seq(
+            "status"->JsString("fail"),
+            "message"->JsString("no id provide")
+          ))
+      ),
+      id => Word.find(id) match {
+        case Some(myWord) => {
+          myWord.copy(favourCount = Some(myWord.favourCount.getOrElse(0) + 1)).save
+
+          Ok(JsObject(Seq(
+            "status"->JsString("ok"),
+            "favourCount"->JsNumber(myWord.favourCount.get)
+          )))
+        }
+        case None =>
+          Ok(JsObject(
+            Seq("status"->JsString("fail"),
+            "message"->JsString("word not found"))
+        ))}
+    )
+  }
 }

@@ -10,7 +10,7 @@ POST    /words                      controllers.WordController.createWord
 GET     /words/new                  controllers.WordController.newWord
 GET     /words/:id                  controllers.WordController.showWord(id:Int)
 
-POST    /favour/words               controllers.Application.favourWord
+POST    /favour/words               controllers.WordController.favourWord
 
 POST    /comments                   controllers.CommentController.createComment
 
@@ -18,6 +18,7 @@ GET     /login                      controllers.MemberController.login
 GET     /logout                     controllers.MemberController.logout
 POST    /login                      controllers.MemberController.doLogin
 GET     /regist                     controllers.MemberController.regist
+POST    /regist                     controllers.MemberController.doRegist
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

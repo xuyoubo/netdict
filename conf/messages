@@ -6,3 +6,5 @@ login.validation.require=请输入用户名和密码
 login.validation.incorrent=用户名/密码不正确
 
 login.title=登录
+
+regist.success=注册成功

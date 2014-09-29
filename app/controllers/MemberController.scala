@@ -13,6 +13,10 @@ import scala.concurrent.Future
 import controllers._
 import play.api.libs.json._
 
+case class LoginData(username: String, password: String)
+
+case class RegistData(username: String, password: String,confirm: String)
+
 object MemberController extends BaseController {
 
   def login = Action { implicit request =>
@@ -24,8 +28,6 @@ object MemberController extends BaseController {
     Redirect(routes.Application.index).withNewSession
   }
 
-  case class LoginData(username: String, password: String)
-
   val LoginForm = Form(
     mapping(
       "name" -> nonEmptyText,
@@ -34,10 +36,29 @@ object MemberController extends BaseController {
   )
 
   def regist = Action { implicit request =>
-    Ok("regist")
+    Ok(views.html.members.regist(RegistForm.fill(RegistData("","",""))))
   }
 
-  def doLogin = Action { implicit request => 
+  val RegistForm = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "confirm" -> nonEmptyText
+    )(RegistData.apply)(RegistData.unapply)
+  )
+
+  def doRegist = Action { implicit request =>
+    RegistForm.bindFromRequest.fold(
+      errorForm => {
+        Ok(views.html.members.regist(errorForm))
+      },
+      registData => {
+        Redirect(routes.Application.index).flashing("success" -> Messages("regist.success"))
+      }
+    )
+  }
+
+  def doLogin = Action { implicit request =>
     LoginForm.bindFromRequest.fold(
       errors => Redirect(routes.MemberController.login).flashing("error" -> Messages("login.validation.require")),
       loginData => Member.authorize(loginData.username, loginData.password) match {
