@@ -5,6 +5,7 @@ import scalikejdbc._
 case class Word(
   id: Int,
   keyword: String,
+  original: Option[String] = None,
   trans: Option[String] = None,
   searchCount: Option[Int] = None,
   favourCount: Option[Int] = None
@@ -23,12 +24,13 @@ object Word extends SQLSyntaxSupport[Word] {
 
   override val tableName = "word"
 
-  override val columns = Seq("id", "keyword", "trans", "search_count", "favour_count")
+  override val columns = Seq("id", "keyword","original", "trans", "search_count", "favour_count")
 
   def apply(w: SyntaxProvider[Word])(rs: WrappedResultSet): Word = apply(w.resultName)(rs)
   def apply(w: ResultName[Word])(rs: WrappedResultSet): Word = new Word(
     id = rs.get(w.id),
     keyword = rs.get(w.keyword),
+    original = rs.get(w.original),
     trans = rs.get(w.trans),
     searchCount = rs.get(w.searchCount),
     favourCount = rs.get(w.favourCount)
@@ -66,17 +68,20 @@ object Word extends SQLSyntaxSupport[Word] {
 
   def create(
     keyword: String,
+    original: Option[String] = None,
     trans: Option[String] = None,
     searchCount: Option[Int] = None,
     favourCount: Option[Int] = None)(implicit session: DBSession = autoSession): Word = {
     val generatedKey = withSQL {
       insert.into(Word).columns(
         column.keyword,
+        column.original,
         column.trans,
         column.searchCount,
         column.favourCount
       ).values(
         keyword,
+        original,
         trans,
         searchCount,
         favourCount
@@ -86,6 +91,7 @@ object Word extends SQLSyntaxSupport[Word] {
     Word(
       id = generatedKey.toInt,
       keyword = keyword,
+      original = original,
       trans = trans,
       searchCount = searchCount,
       favourCount = favourCount)
@@ -96,6 +102,7 @@ object Word extends SQLSyntaxSupport[Word] {
       update(Word).set(
         column.id -> entity.id,
         column.keyword -> entity.keyword,
+        column.original -> entity.original,
         column.trans -> entity.trans,
         column.searchCount -> entity.searchCount,
         column.favourCount -> entity.favourCount
@@ -112,25 +119,6 @@ object Word extends SQLSyntaxSupport[Word] {
     withSQL {
       select.from(Word as w).orderBy(w.searchCount).desc.limit(n).offset(0)
     }.map(Word(w.resultName)).list.apply()
-  }
-
-  def findByKeyword(text: String)(implicit session: DBSession = AutoSession): Option[Word] = {
-    val word = withSQL {
-      select.from(Word as w).where.eq(w.keyword, text)
-    }.map(Word(w.resultName)).first.apply()
-
-    if(word.isDefined) {
-      updateSearchCount(word.get)
-    }
-    word
-  }
-
-  def updateSearchCount(word:Word)(implicit session: DBSession = AutoSession) = {
-    withSQL {
-      update(Word).
-        set(Word.column.searchCount -> (word.searchCount.getOrElse(0) + 1)).
-        where.eq(Word.column.id,word.id)
-    }.update.apply()
   }
 
 }

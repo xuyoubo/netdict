@@ -2,7 +2,6 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models._
 import play.api.data.Forms._
 import play.api.data._
 import scalikejdbc.SQLInterpolation._
@@ -10,10 +9,12 @@ import scalikejdbc._
 import play.api.i18n._
 import play.api.data.validation._
 import play.api.libs.json._
+import services._
 
-case class WordData(keyword: String, trans: Option[String])
+case class WordData(keyword: String, original:Option[String], trans: Option[String])
 
 object WordController extends BaseController {
+  val wordService:WordService = new DefaultWordService
 
   case class SearchData(keyword: String)
   val SearchForm = Form(
@@ -24,7 +25,7 @@ object WordController extends BaseController {
 
   val keywordConstraint: Constraint[String] = Constraint("constraints.keywordConstraint")({
     plainText => {
-      if (Word.countBy(sqls.eq(Word.w.keyword,plainText)) > 0) {
+      if (wordService.exists(plainText)) {
         Invalid(ValidationError(Messages("keyword.duplicate")))
       }
       else {
@@ -36,23 +37,20 @@ object WordController extends BaseController {
   val WordForm = Form(
     mapping(
       "keyword" -> nonEmptyText.verifying(keywordConstraint),
+      "original" -> optional(text),
       "trans" -> optional(text)
     )(WordData.apply)(WordData.unapply)
   )
 
-  def showWord(keyword:String) = Action { implicit request =>
-    val word = Word.findByKeyword(keyword)
-    Ok(views.html.words.show_word(word))
-  }
-
   def showWord(id:Int) = Action { implicit request =>
-    val word = Word.find(id)
+    val word = wordService.find(id)
+    println(word)
     Ok(views.html.words.show_word(word))
   }
 
   def newWord = AuthenticatedAction { implicit request =>
     val w = request.getQueryString("w")
-    val form = WordForm.fill(WordData(w.getOrElse(""),None))
+    val form = WordForm.fill(WordData(w.getOrElse(""),None,None))
     Ok(views.html.words.new_word(form))
   }
 
@@ -62,7 +60,7 @@ object WordController extends BaseController {
         Redirect(routes.Application.index)
       },
       searchData => {
-        val words = Word.findAllBy(sqls.eq(Word.w.keyword,searchData.keyword))
+        val words = wordService.search(searchData.keyword)
         if(words.size == 1) {
           Ok(views.html.words.show_word(Some(words.head)))
         }
@@ -79,12 +77,12 @@ object WordController extends BaseController {
         Ok(views.html.words.new_word(formWithErrors))
       },
       word => {
-        if (Word.countBy(sqls.eq(Word.w.keyword,word.keyword)) > 0) {
+        if (wordService.exists(word.keyword)) {
           Redirect("/").flashing("message" -> Messages("save.success"))
           Ok(views.html.words.new_word(WordForm))
         }
         else {
-          val w = Word.create(word.keyword, word.trans,Some(0),Some(0))
+          val w = wordService.create(word.keyword, word.original, word.trans)
           Redirect(routes.WordController.showWord(w.id)).flashing("success" -> Messages("save.success"))
         }
       }
@@ -101,7 +99,7 @@ object WordController extends BaseController {
             "message"->JsString("no id provide")
           ))
       ),
-      id => Word.find(id) match {
+      id => wordService.find(id) match {
         case Some(myWord) => {
           myWord.copy(favourCount = Some(myWord.favourCount.getOrElse(0) + 1)).save
 

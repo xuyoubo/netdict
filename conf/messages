@@ -8,3 +8,5 @@ login.validation.incorrent=用户名/密码不正确
 login.title=登录
 
 regist.success=注册成功
+regist.validation.confirmError=密码与确认不同，请重新输入
+regist.validation.duplicate=该用户已经存在

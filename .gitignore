@@ -5,6 +5,7 @@ target
 tmp
 .history
 dist
+TODO.txt
 /.idea
 /*.iml
 /out

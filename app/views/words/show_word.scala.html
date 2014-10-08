@@ -1,4 +1,3 @@
-@import models.Word
 @import helper._
 @(word: Option[Word])(implicit flash: Flash,request:play.api.mvc.RequestHeader)
 
@@ -11,8 +10,15 @@
       @if(word.isDefined) {
         <div class="search-pane">
           <div class="search-result">
-            <h4>@word.get.keyword</h4>
-            <p>@word.get.trans</p>
+            <h3>@word.get.keyword</h3>
+            <div id="original">
+              <h4 class="label label-default">原意</h4> 
+              <p>@word.get.original</p>
+            </div>
+            <div id="trans">
+              <h4 class="label label-default">引申</h4> 
+              <p>@word.get.trans</p>
+            </div>
           </div>
           <div>
             <form id="favourForm">

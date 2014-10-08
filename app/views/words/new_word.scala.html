@@ -18,6 +18,10 @@
           }
         </div>
         <div class="form-group">
+          <div for="original">原意</div>
+          <textarea name="original" class="form-control" id="original" rows="2" value='@wordForm("original").value.getOrElse("")'></textarea>
+        </div>
+        <div class="form-group">
           <div for="trans">解释</div>
           <textarea name="trans" class="form-control" id="trans" rows="6" value='@wordForm("trans").value.getOrElse("")'></textarea>
         </div>

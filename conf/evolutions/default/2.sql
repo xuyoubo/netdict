@@ -10,5 +10,7 @@ CREATE TABLE member (
 );
 
 ALTER SEQUENCE member_id_seq OWNED BY member.id;
+
+insert into member (name,password) values ('test','123456')
 # --- !Downs
 DROP TABLE member;

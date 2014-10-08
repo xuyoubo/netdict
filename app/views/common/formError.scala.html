@@ -1,0 +1,11 @@
+@(form:Form[_])
+
+@if(form.hasGlobalErrors) {
+  <div class="alert alert-danger" role="alert">
+  <ul class="list-unstyled">
+    @for(error <- form.globalErrors) {
+      <li>@error.message</li>
+    }
+  </ul>
+  </div>
+}

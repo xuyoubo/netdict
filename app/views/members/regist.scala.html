@@ -3,11 +3,12 @@
 @main("注册新用户") {
   <div class="login-form">
     @common.notice()
+    @common.formError(registForm)
     <form method="POST" action="regist" class="form">
       <div class="form-group">
         <label for="name">用户</label>
-        <input id="name" name="name" type="text" class="form-control"/>
-        @common.fieldError(registForm,"name")
+        <input id="name" name="username" type="text" class="form-control" autocomplete="off"/>
+        @common.fieldError(registForm,"username")
       </div>
       <div class="form-group">
         <label for="password">密码</label>
