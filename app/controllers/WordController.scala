@@ -82,7 +82,8 @@ object WordController extends BaseController {
           Ok(views.html.words.new_word(WordForm))
         }
         else {
-          val w = wordService.create(word.keyword, word.original, word.trans)
+          val w = wordService.create(word.keyword, 
+            request.session.get("userid").map{_.toInt}, word.original, word.trans)
           Redirect(routes.WordController.showWord(w.id)).flashing("success" -> Messages("save.success"))
         }
       }

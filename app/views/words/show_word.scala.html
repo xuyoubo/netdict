@@ -7,30 +7,39 @@
     @common.layout{
       @common.search_form()
 
-      @if(word.isDefined) {
-        <div class="search-pane">
-          <div class="search-result">
-            <h3>@word.get.keyword</h3>
-            <div id="original">
-              <h4 class="label label-default">原意</h4> 
-              <p>@word.get.original</p>
+      @word match { 
+        case Some(w) => {
+          <div class="search-pane">
+            <div class="search-result">
+              <h3>@w.keyword</h3>
+              <div id="original">
+                <h4 class="label label-default">原意</h4> 
+                <p>@w.original</p>
+              </div>
+              <div id="trans">
+                <h4 class="label label-default">引申</h4> 
+                <p>@w.trans</p>
+              </div>
             </div>
-            <div id="trans">
-              <h4 class="label label-default">引申</h4> 
-              <p>@word.get.trans</p>
-            </div>
-          </div>
-          <div>
             <form id="favourForm">
-              <input type="hidden" name="id" value="@word.get.id"/>
+              <input type="hidden" name="id" value="@w.id"/>
               <button class="btn btn-default" id="favourBtn">
-                <span class="glyphicon glyphicon-thumbs-up" id="favourCount">&nbsp;@word.get.favourCount</span>
+                <span class="glyphicon glyphicon-thumbs-up" id="favourCount">&nbsp;@w.favourCount</span>
               </button>
             </form>
+            @w.member match {
+              case Some(wm) => {
+                <div>
+                  <span>贡献&nbsp;@wm.name</span>
+                </div>
+              }
+              case _ => {}
+            }
           </div>
-        </div>
-      } else {
-        未找到单词
+        }
+        case _ => {
+          未找到单词
+        }
       }
       <hr/>
       @word match {

@@ -10,6 +10,7 @@ CREATE TABLE word (
     member_id integer,
     search_count integer,
     favour_count integer,
+    is_audit integer DEFAULT 0,
     PRIMARY KEY (id)
 );
 ALTER SEQUENCE word_id_seq OWNED BY word.id;

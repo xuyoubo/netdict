@@ -8,10 +8,14 @@ case class Word(
   original: Option[String] = None,
   trans: Option[String] = None,
   searchCount: Option[Int] = None,
-  favourCount: Option[Int] = None
+  favourCount: Option[Int] = None,
+  memberId:Option[Int] = None,
+  isAudit:Option[Int] = Some(0)
   ) {
 
   lazy val comments: List[Comment] = Comment.findAllBy(sqls.eq(Comment.c.wordId,this.id))
+
+  lazy val member: Option[Member] = Member.find(memberId.getOrElse(0))
 
   def save()(implicit session: DBSession = Word.autoSession): Word = Word.save(this)(session)
 
@@ -24,7 +28,7 @@ object Word extends SQLSyntaxSupport[Word] {
 
   override val tableName = "word"
 
-  override val columns = Seq("id", "keyword","original", "trans", "search_count", "favour_count")
+  override val columns = Seq("id", "keyword","original", "trans","member_id", "search_count", "favour_count","is_audit")
 
   def apply(w: SyntaxProvider[Word])(rs: WrappedResultSet): Word = apply(w.resultName)(rs)
   def apply(w: ResultName[Word])(rs: WrappedResultSet): Word = new Word(
@@ -32,8 +36,10 @@ object Word extends SQLSyntaxSupport[Word] {
     keyword = rs.get(w.keyword),
     original = rs.get(w.original),
     trans = rs.get(w.trans),
+    memberId = rs.get(w.memberId),
     searchCount = rs.get(w.searchCount),
-    favourCount = rs.get(w.favourCount)
+    favourCount = rs.get(w.favourCount),
+    isAudit = rs.get(w.isAudit)
   )
 
   val w = Word.syntax("w")
@@ -71,20 +77,27 @@ object Word extends SQLSyntaxSupport[Word] {
     original: Option[String] = None,
     trans: Option[String] = None,
     searchCount: Option[Int] = None,
-    favourCount: Option[Int] = None)(implicit session: DBSession = autoSession): Word = {
+    favourCount: Option[Int] = None,
+    memberId:Option[Int] = None,
+    isAudit:Option[Int] = Some(0)
+    )(implicit session: DBSession = autoSession): Word = {
     val generatedKey = withSQL {
       insert.into(Word).columns(
         column.keyword,
         column.original,
         column.trans,
         column.searchCount,
-        column.favourCount
+        column.favourCount,
+        column.memberId,
+        column.isAudit
       ).values(
         keyword,
         original,
         trans,
         searchCount,
-        favourCount
+        favourCount,
+        memberId,
+        isAudit
       )
     }.updateAndReturnGeneratedKey.apply()
 
@@ -94,7 +107,10 @@ object Word extends SQLSyntaxSupport[Word] {
       original = original,
       trans = trans,
       searchCount = searchCount,
-      favourCount = favourCount)
+      favourCount = favourCount,
+      memberId = memberId,
+      isAudit = isAudit
+    )
   }
 
   def save(entity: Word)(implicit session: DBSession = autoSession): Word = {
@@ -105,7 +121,9 @@ object Word extends SQLSyntaxSupport[Word] {
         column.original -> entity.original,
         column.trans -> entity.trans,
         column.searchCount -> entity.searchCount,
-        column.favourCount -> entity.favourCount
+        column.favourCount -> entity.favourCount,
+        column.memberId -> entity.memberId,
+        column.isAudit -> entity.isAudit
       ).where.eq(column.id, entity.id)
     }.update.apply()
     entity
